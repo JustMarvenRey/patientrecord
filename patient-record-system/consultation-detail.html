@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Record System - Consultation Detail</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/popup.js?v=20261002"></script>
+    <script type="module" src="./js/auth-guard.js?v=20261002"></script>
+    <script type="module" src="./js/consultation-detail.js?v=20261002"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body { background-color: #f4f6f5; }
+      .section-card {
+        background: #fff;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+      .section-card h5 {
+        font-weight: 600;
+        color: #006400;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .vital-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+      }
+      .vital-item {
+        background: #f8f9fa;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        text-align: center;
+      }
+      .vital-item .vital-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+      }
+      .vital-item .vital-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #212529;
+      }
+      .vital-item .vital-unit {
+        font-size: 0.8rem;
+        color: #6c757d;
+      }
+      .vital-item.alert-high .vital-value { color: #dc3545; }
+      .vital-item.alert-low  .vital-value { color: #fd7e14; }
+      .detail-label { font-weight: 600; color: #495057; font-size: 0.85rem; }
+      .detail-value { color: #212529; }
+      .badge.bg-success { background-color: #1e7e34 !important; }
+    </style>
+    <link rel="stylesheet" href="./css/style.css"/>
+</head>
+  <body>
+        <!-- Topbar -->
+<header class="prs-topbar">
+  <button class="sidebar-toggle" id="sidebar-toggle">&#9776;</button>
+  <a href="home.html" class="brand"><span class="brand-icon">🏥</span> Patient Record System</a>
+  <div class="topbar-right" id="nav-user-info"></div>
+</header>
+
+<!-- Sidebar -->
+<nav class="prs-sidebar" id="prs-sidebar">
+  <div class="nav-section-label">Main</div>
+  <a class="nav-link" href="home.html" data-module="home"><span class="ni">🏠</span> Dashboard</a>
+  <a class="nav-link" href="appointments.html" data-module="appointments"><span class="ni">📅</span> Appointments</a>
+  <a class="nav-link" href="consultations.html" data-module="consultations"><span class="ni">🩺</span> Consultations</a>
+  <a class="nav-link" href="index.html" data-module="index"><span class="ni">👥</span> Patients</a>
+  <a class="nav-link" href="billing.html" data-module="billing"><span class="ni">💳</span> Billing</a>
+  <div class="nav-section-label">Master Files</div>
+  <a class="nav-link" href="doctors.html" data-module="doctors"><span class="ni">👨‍⚕️</span> Doctors</a>
+  <a class="nav-link" href="medicines.html" data-module="medicines"><span class="ni">💊</span> Medicines</a>
+  <a class="nav-link" href="specializations.html" data-module="specializations"><span class="ni">🎓</span> Specializations</a>
+  <a class="nav-link" href="diagnoses.html" data-module="diagnoses"><span class="ni">📋</span> Diagnoses / ICD-10</a>
+  <a class="nav-link" href="generics.html" data-module="generics"><span class="ni">🧬</span> Generics</a>
+  <a class="nav-link" href="laboratory-tests.html" data-module="laboratory-tests"><span class="ni">🧪</span> Laboratory Tests</a>
+  <div class="nav-section-label">System</div>
+  <a class="nav-link" href="users.html" data-module="users"><span class="ni">🧑‍💼</span> User Accounts</a>
+  <a class="nav-link" href="roles.html" data-module="roles"><span class="ni">🔑</span> Roles</a>
+</nav>
+
+<div class="prs-overlay" id="prs-overlay"></div>
+
+    <main class="prs-main" id="prs-main">
+<div class="container-fluid">
+
+      <!-- Back link -->
+      <a href="consultations.html" class="btn btn-outline-secondary btn-sm mb-3">
+        &larr; Back to Consultations
+      </a>
+
+      <!-- Loading / error state -->
+      <div id="page-loading" class="text-muted">Loading consultation...</div>
+      <div id="page-error" class="alert alert-danger d-none"></div>
+
+      <!-- ── Consultation Summary ──────────────────────────────────────── -->
+      <div class="section-card d-none" id="section-consultation">
+        <h5>&#x1F4CB; Consultation Summary</h5>
+        <div class="row g-3" id="consultation-summary"></div>
+      </div>
+
+      <!-- ── Vital Signs ───────────────────────────────────────────────── -->
+      <div class="section-card d-none" id="section-vitals">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">&#x2764; Vital Signs</h5>
+          <div id="vitals-action-btn"></div>
+        </div>
+        <div id="vitals-content"></div>
+      </div>
+
+      <!-- ── Consultation Diagnoses ────────────────────────────────────── -->
+      <div class="section-card d-none" id="section-diagnoses">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">&#x1F4CB; Diagnoses (ICD-10)</h5>
+          <div id="diagnoses-action-btn"></div>
+        </div>
+        <div id="diagnoses-content"></div>
+      </div>
+
+      <!-- Prescriptions -->
+      <div class="section-card d-none" id="section-prescriptions">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">&#x1F48A; Prescriptions</h5>
+          <div id="prescriptions-action-btn"></div>
+        </div>
+        <div id="prescriptions-content"></div>
+      </div>
+
+      <!-- Laboratory -->
+      <div class="section-card d-none" id="section-laboratories">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">&#x1F9EA; Laboratory (if needed)</h5>
+          <div id="laboratories-action-btn"></div>
+        </div>
+        <div id="laboratories-content"></div>
+      </div>
+
+      <!-- Billing -->
+      <div class="section-card d-none" id="section-billing">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">&#x1F4B3; Billing</h5>
+          <div id="billing-action-btn"></div>
+        </div>
+        <div id="billing-content"></div>
+        <div id="section-professional-fees" class="d-none mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Professional Fees</h6>
+            <div id="professional-fees-action-btn"></div>
+          </div>
+          <div id="professional-fees-content"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Vital Signs Modal ─────────────────────────────────────────── -->
+    <div class="modal fade" id="vitals-modal" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="vitals-modal-title">Vital Signs</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="vitals-modal-body"></div>
+          <div class="modal-footer" id="vitals-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Add Diagnosis Modal ───────────────────────────────────────── -->
+    <div class="modal fade" id="diagnosis-modal" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Diagnosis</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label">Select ICD-10 Diagnosis</label>
+            <select class="form-select" id="diagnosis-select">
+              <option value="" disabled selected>Loading diagnoses...</option>
+            </select>
+            <div class="form-text mt-1" id="diagnosis-select-description"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-sm" id="btn-save-diagnosis">Add Diagnosis</button>
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prescription Modal -->
+    <div class="modal fade" id="prescription-modal" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="prescription-modal-title">Add Prescription</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="prescription-modal-body"></div>
+          <div class="modal-footer" id="prescription-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing Modal -->
+    <div class="modal fade" id="billing-modal" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="billing-modal-title">Billing</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="billing-modal-body"></div>
+          <div class="modal-footer" id="billing-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Laboratory Modal -->
+    <div class="modal fade" id="laboratory-modal" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="laboratory-modal-title">Add Lab Result</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="laboratory-modal-body"></div>
+          <div class="modal-footer" id="laboratory-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Professional Fee Modal -->
+    <div class="modal fade" id="fee-modal" role="dialog">
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Professional Fee</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="fee-modal-body"></div>
+          <div class="modal-footer" id="fee-modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div></main>
+<script>
+  const sidebar = document.getElementById('prs-sidebar');
+  const main    = document.getElementById('prs-main');
+  const overlay = document.getElementById('prs-overlay');
+  document.getElementById('sidebar-toggle').addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    } else {
+      sidebar.classList.toggle('collapsed');
+      main.classList.toggle('expanded');
+    }
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+</script>
+</body>
+</html>

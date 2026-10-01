@@ -1,0 +1,463 @@
+/* ============================================================
+   Patient Record System — Global Stylesheet
+   ============================================================ */
+
+:root {
+  --prs-green:       #006400;
+  --prs-green-light: #008000;
+  --prs-green-pale:  #e8f5e9;
+  --prs-green-mid:   #c8e6c9;
+  --prs-sidebar-w:   240px;
+  --prs-topbar-h:    60px;
+  --prs-radius:      10px;
+  --prs-shadow:      0 2px 12px rgba(0,0,0,.08);
+  --prs-shadow-lg:   0 4px 24px rgba(0,0,0,.12);
+  --body-bg:         #f0f4f0;
+  --card-bg:         #ffffff;
+  --text-main:       #1a2e1a;
+  --text-muted:      #6c757d;
+  --border:          #dee2e6;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--body-bg);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* ── Topbar ───────────────────────────────────────────────── */
+.prs-topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--prs-topbar-h);
+  background: var(--prs-green);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  z-index: 1030;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  gap: .75rem;
+}
+
+.prs-topbar .brand {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  text-decoration: none;
+}
+
+.prs-topbar .brand-icon {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,.2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: .3rem .5rem;
+  border-radius: 6px;
+  transition: background .15s;
+  line-height: 1;
+}
+.sidebar-toggle:hover { background: rgba(255,255,255,.15); }
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: #fff;
+  font-size: .85rem;
+}
+
+.user-avatar {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: .8rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.btn-logout {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.35);
+  color: #fff;
+  font-size: .8rem;
+  padding: .3rem .8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.btn-logout:hover { background: rgba(255,255,255,.28); }
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+.prs-sidebar {
+  position: fixed;
+  top: var(--prs-topbar-h);
+  left: 0; bottom: 0;
+  width: var(--prs-sidebar-w);
+  background: #fff;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 1020;
+  transition: transform .25s ease;
+  padding: .5rem 0 1rem;
+}
+.prs-sidebar.collapsed { transform: translateX(-100%); }
+
+.nav-section-label {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: .9rem 1.1rem .3rem;
+}
+
+.prs-sidebar a.nav-link {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .5rem 1.1rem;
+  color: #444;
+  font-size: .865rem;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.prs-sidebar a.nav-link .ni { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+.prs-sidebar a.nav-link:hover { background: var(--prs-green-pale); color: var(--prs-green); }
+.prs-sidebar a.nav-link.active {
+  background: var(--prs-green-pale);
+  color: var(--prs-green);
+  font-weight: 600;
+  border-left-color: var(--prs-green);
+}
+
+/* ── Main content ─────────────────────────────────────────── */
+.prs-main {
+  margin-left: var(--prs-sidebar-w);
+  margin-top: var(--prs-topbar-h);
+  padding: 1.75rem;
+  transition: margin-left .25s ease;
+}
+.prs-main.expanded { margin-left: 0; }
+
+/* ── Page header ──────────────────────────────────────────── */
+.page-header { margin-bottom: 1.5rem; }
+.page-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 .2rem; color: var(--text-main); }
+.page-header p { color: var(--text-muted); margin: 0; font-size: .875rem; }
+
+/* ── Stat cards ───────────────────────────────────────────── */
+.stat-card {
+  background: var(--card-bg);
+  border-radius: var(--prs-radius);
+  box-shadow: var(--prs-shadow);
+  border: 1px solid var(--border);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .2s, transform .2s;
+}
+.stat-card:hover { box-shadow: var(--prs-shadow-lg); transform: translateY(-2px); color: inherit; }
+.stat-icon {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.stat-value { font-size: 1.65rem; font-weight: 700; line-height: 1; }
+.stat-label { font-size: .78rem; color: var(--text-muted); margin-top: .15rem; }
+
+/* ── Module cards ─────────────────────────────────────────── */
+.module-card {
+  background: var(--card-bg);
+  border-radius: var(--prs-radius);
+  box-shadow: var(--prs-shadow);
+  border: 1px solid var(--border);
+  padding: 1rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  transition: box-shadow .2s, transform .2s, background .15s;
+}
+.module-card:hover {
+  box-shadow: var(--prs-shadow-lg);
+  transform: translateY(-2px);
+  background: var(--prs-green-pale);
+}
+.module-icon {
+  width: 42px; height: 42px;
+  background: var(--prs-green-pale);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+.module-card:hover .module-icon { background: var(--prs-green-mid); }
+.module-title { font-weight: 600; font-size: .9rem; color: var(--prs-green); margin: 0 0 .1rem; }
+.module-desc { font-size: .76rem; color: var(--text-muted); margin: 0; line-height: 1.3; }
+
+/* ── Form card ────────────────────────────────────────────── */
+.form-card {
+  background: var(--card-bg);
+  border-radius: var(--prs-radius);
+  box-shadow: var(--prs-shadow);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.form-card-title {
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+  padding-bottom: .6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Table card ───────────────────────────────────────────── */
+.table-card {
+  background: var(--card-bg);
+  border-radius: var(--prs-radius);
+  box-shadow: var(--prs-shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.table-card .table-card-header {
+  padding: .85rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.table-card .table-card-header .tc-title {
+  font-weight: 600;
+  font-size: .95rem;
+  flex: 1;
+}
+.table-card table { margin: 0; }
+.table-card table thead th {
+  background: var(--prs-green-pale);
+  color: var(--prs-green);
+  font-size: .73rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--prs-green-mid);
+  padding: .7rem 1rem;
+}
+.table-card table tbody td {
+  padding: .6rem 1rem;
+  vertical-align: middle;
+  font-size: .865rem;
+  border-bottom: 1px solid #f0f4f0;
+}
+.table-card table tbody tr:last-child td { border-bottom: none; }
+.table-card table tbody tr:hover td { background: #fafffe; }
+
+/* ── Section card (consultation-detail) ──────────────────── */
+.section-card {
+  background: var(--card-bg);
+  border-radius: var(--prs-radius);
+  box-shadow: var(--prs-shadow);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.section-card h5 { font-size: .95rem; font-weight: 700; margin: 0; }
+
+/* ── Form controls ────────────────────────────────────────── */
+.form-control, .form-select {
+  border-radius: 7px;
+  border-color: #ced4da;
+  font-size: .875rem;
+  transition: border-color .15s, box-shadow .15s;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--prs-green);
+  box-shadow: 0 0 0 .2rem rgba(0,100,0,.15);
+}
+label.form-label { font-size: .8rem; font-weight: 600; color: #444; margin-bottom: .3rem; }
+
+/* ── Modals (minimal) ─────────────────────────────────────────
+   White surface, hairline dividers, no coloured header bar.
+   Applies to every pop-up in the system (view / update / delete /
+   forms), since they all share the same Bootstrap modal classes.   */
+.modal-backdrop.show { opacity: .3; }
+
+/* vertically centre the dialog (same effect as .modal-dialog-centered) */
+.modal-dialog { display: flex; align-items: center; min-height: calc(100% - 3.5rem); }
+
+.modal-content {
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.14);
+  background: #fff;
+  overflow: hidden;
+}
+
+.modal-header,
+.modal-header.text-white {
+  background: transparent !important;
+  color: var(--text-main) !important;
+  border-bottom: 1px solid #eef0ee;
+  border-radius: 0;
+  padding: 1rem 1.6rem .85rem;
+}
+.modal-title { font-size: 1rem; font-weight: 600; letter-spacing: -.01em; color: var(--text-main); }
+.modal-header .btn-close { font-size: .7rem; opacity: .4; box-shadow: none; }
+.modal-header .btn-close:hover { opacity: .8; }
+
+.modal-body { padding: 1.1rem 1.25rem; font-size: .875rem; }
+
+.modal-footer {
+  padding: .75rem 1.6rem 1.25rem;
+  border-top: none;
+  gap: .5rem;
+}
+.modal-footer > * { margin: 0; }
+.modal-footer .btn-group { gap: .5rem; width: 100%; }
+.modal-footer .btn-group > .btn { border-radius: 8px !important; margin: 0 !important; }
+.modal-footer .btn { border-radius: 8px; font-weight: 500; }
+
+/* Close / cancel buttons become quiet outlined buttons; primary actions keep their colour */
+.modal-footer .btn-secondary {
+  background: #fff;
+  color: #555;
+  border: 1px solid #dfe3df;
+}
+.modal-footer .btn-secondary:hover,
+.modal-footer .btn-secondary:focus { background: #f5f7f5; color: var(--text-main); border-color: #cfd5cf; }
+
+/* Detail tables (View modals): label column muted, hairline rows, no zebra/borders */
+.modal-body .table { margin-bottom: 0; --bs-table-bg: transparent; }
+.modal-body .table > :not(caption) > * > * {
+  padding: .55rem .25rem;
+  border-bottom: 1px solid #f0f2f0;
+  background: transparent;
+  box-shadow: none;
+}
+.modal-body .table tr:last-child > * { border-bottom: none; }
+.modal-body .table td:first-child { color: var(--text-muted); width: 38%; font-size: .8rem; }
+
+.modal-body p:last-child { margin-bottom: 0; }
+
+/* line detail tables up with the form fields / text above them */
+.modal-body .row > .table { width: calc(100% - 1.5rem); margin-left: .75rem; margin-right: .75rem; }
+
+/* ── Badges ───────────────────────────────────────────────── */
+.badge { border-radius: 6px; font-size: .72rem; font-weight: 600; }
+
+/* ── Alerts ───────────────────────────────────────────────── */
+.alert { border-radius: var(--prs-radius); font-size: .875rem; }
+
+/* ── Login ────────────────────────────────────────────────── */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #003300 0%, #006400 60%, #008000 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0,0,0,.3);
+  width: 100%; max-width: 400px;
+  padding: 2.25rem;
+}
+.login-logo {
+  width: 58px; height: 58px;
+  background: var(--prs-green-pale);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.7rem;
+  margin: 0 auto 1.1rem;
+}
+.login-card h4 { font-size: 1.25rem; font-weight: 700; color: var(--prs-green); }
+.login-card .btn-login {
+  background: var(--prs-green);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: .55rem 1rem;
+  font-size: .9rem;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  transition: background .15s;
+}
+.login-card .btn-login:hover { background: var(--prs-green-light); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .prs-sidebar { transform: translateX(-100%); }
+  .prs-sidebar.open { transform: translateX(0); box-shadow: var(--prs-shadow-lg); }
+  .prs-main { margin-left: 0 !important; padding: 1rem; }
+  .prs-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.4); z-index: 1015;
+  }
+  .prs-overlay.show { display: block; }
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* ============================================================
+   Modal pop-ups (js/popup.js) — replaces alert()/confirm()
+   ============================================================ */
+.prs-popup-backdrop { z-index: 2000; opacity: .45 !important; }
+.prs-popup { z-index: 2010; }
+.prs-popup .prs-popup-dialog { max-width: 420px; }
+.prs-popup .modal-content { animation: prs-pop .16s ease-out; }
+.prs-popup-message { white-space: pre-line; word-break: break-word; font-size: .9rem; }
+.prs-popup .modal-footer { justify-content: flex-end; gap: .5rem; }
+.prs-popup .modal-footer .btn { min-width: 84px; }
+.prs-popup-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%;
+  font-size: .85rem; font-weight: 700; color: #fff; flex: none;
+}
+.prs-popup-success { background: #198754; }
+.prs-popup-error,
+.prs-popup-danger  { background: #dc3545; }
+.prs-popup-warning { background: #e0a800; }
+.prs-popup-info,
+.prs-popup-confirm { background: #0d6efd; }
+@keyframes prs-pop { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
